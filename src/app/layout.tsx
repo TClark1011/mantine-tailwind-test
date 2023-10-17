@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
+import { ColorSchemeScript, MantineProvider, } from "@mantine/core";
+import { theme } from "~/theme";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -16,6 +18,7 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+
 export default function RootLayout({
   children,
 }: {
@@ -23,8 +26,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <ColorSchemeScript />
+      </head>
       <body className={`font-sans ${inter.variable}`}>
-        <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
+        <MantineProvider theme={theme}>
+          <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
+        </MantineProvider>
       </body>
     </html>
   );
