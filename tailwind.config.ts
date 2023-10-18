@@ -1,12 +1,7 @@
-import {
-  type CustomMantineColor,
-  type DefaultMantineColor,
-  DEFAULT_THEME as DEFAULT_MANTINE_THEME,
-} from "@mantine/core";
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
-import type { ExtractLiterals } from "./src/lib/utility-types";
 import {
+  MANTINE_COLOR_NAMES,
   TAILWIND_COLOR_SHADES,
   composeColorPrimitiveVariableName,
 } from "./src/lib/theme-helpers";
@@ -27,26 +22,10 @@ const generateTailwindColorSetForMantineColor = (colorName: string) => {
   return colorSet;
 };
 
-type StrictDefaultMantineColor = ExtractLiterals<DefaultMantineColor>;
-
-// We construct a record so that we can guarantee that we
-// have all the keys, then we just convert it to an array
-// with `Object.keys`
-const mantineColorsRecord: Record<
-  StrictDefaultMantineColor | CustomMantineColor,
-  any
-> = {
-  ...(DEFAULT_MANTINE_THEME.colors as Record<StrictDefaultMantineColor, any>),
-  primary: null,
-  secondary: null,
-};
-
-const ALL_MANTINE_PALETTE_COLORS = Object.keys(mantineColorsRecord);
-
 const mantineColorTwEntries: Record<string, string | Record<string, string>> =
   {};
 
-ALL_MANTINE_PALETTE_COLORS.forEach((color) => {
+MANTINE_COLOR_NAMES.forEach((color) => {
   mantineColorTwEntries[color] = generateTailwindColorSetForMantineColor(color);
 });
 
@@ -78,6 +57,7 @@ const mantineSpacingEntries = composeMantineSizeTwEntries({
 
 export default {
   content: ["./src/**/*.tsx"],
+  darkMode: ["class", '[data-mantine-color-scheme="dark"]'],
   corePlugins: {
     preflight: false,
   },

@@ -6,8 +6,8 @@ import {
   DEFAULT_THEME,
   type MantineTheme,
 } from "@mantine/core";
-import { keys } from "$utils";
 import {
+  MANTINE_COLOR_NAMES,
   TAILWIND_COLOR_SHADES,
   composeColorPrimitiveVariableName,
 } from "$theme-helpers";
@@ -50,14 +50,7 @@ export const themeOverride = createTheme({
  * color transparency feature.
  */
 
-const COLOR_NAMES = [
-  ...new Set([
-    ...keys(DEFAULT_THEME.colors),
-    ...keys(themeOverride.colors),
-  ]).values(),
-];
-
-type MantineColorName = (typeof COLOR_NAMES)[number];
+type MantineColorName = (typeof MANTINE_COLOR_NAMES)[number];
 
 const printHexColorRGBValues = (hexColor: string) => {
   const { r, g, b } = parseHexColorRGBValues(hexColor);
@@ -85,7 +78,7 @@ const composeColorPrimitiveVariablesForColorName = (
   }, {});
 
 const createColorPrimitiveVariables = (theme: MantineTheme) =>
-  COLOR_NAMES.reduce(
+  MANTINE_COLOR_NAMES.reduce(
     (result, colorName) => ({
       ...result,
       ...composeColorPrimitiveVariablesForColorName(colorName, theme),
