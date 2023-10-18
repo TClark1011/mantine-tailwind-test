@@ -12,8 +12,22 @@ import {
   composeColorPrimitiveVariableName,
 } from "$theme-helpers";
 
+const expandPotentiallyShortHexColor = (hexColor: string) => {
+  const hexWithoutHash = hexColor.replace("#", "");
+
+  const hexR = hexWithoutHash[0];
+  const hexG = hexWithoutHash[1];
+  const hexB = hexWithoutHash[2];
+  if (hexWithoutHash.length === 3) {
+    return `#${hexR}${hexR}${hexG}${hexG}${hexB}${hexB}`;
+  }
+
+  return hexColor;
+};
+
 const parseHexColorRGBValues = (hexColor: string) => {
-  const hex = hexColor.replace("#", "");
+  const fullLengthHexColor = expandPotentiallyShortHexColor(hexColor);
+  const hex = fullLengthHexColor.replace("#", "");
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
@@ -85,10 +99,16 @@ export const cssVariablesResolver: CSSVariablesResolver = (theme) => ({
     [composeColorPrimitiveVariableName("error")]: printHexColorRGBValues(
       theme.colors.red[9],
     ),
+    [composeColorPrimitiveVariableName("body")]: printHexColorRGBValues(
+      theme.colors.dark[7],
+    ),
   },
   light: {
     [composeColorPrimitiveVariableName("error")]: printHexColorRGBValues(
       theme.colors.red[6],
+    ),
+    [composeColorPrimitiveVariableName("body")]: printHexColorRGBValues(
+      theme.white,
     ),
   },
 });

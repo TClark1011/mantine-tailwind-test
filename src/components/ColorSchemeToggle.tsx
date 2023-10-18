@@ -4,6 +4,7 @@ import {
   Button,
   type MantineColorScheme,
   useMantineColorScheme,
+  useComputedColorScheme,
 } from "@mantine/core";
 import { type FC } from "react";
 import { type StrictExclude } from "$utility-types";
@@ -12,33 +13,15 @@ import { useHydratedValue, useIsHydrated } from "$hooks/use-hydrated-value";
 
 type AppliedMantineColorScheme = StrictExclude<MantineColorScheme, "auto">;
 
-const getUserSystemColorScheme = (): AppliedMantineColorScheme => {
-  try {
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-    return isDark ? "dark" : "light";
-  } catch {
-    return "light";
-  }
-};
-
 const colorSchemeLabels: Record<AppliedMantineColorScheme, string> = {
   light: "Light",
   dark: "Dark",
 };
 
-const userSystemColorScheme = getUserSystemColorScheme();
-
 const useAppliedColorScheme = (): AppliedMantineColorScheme => {
-  const colorSchemeController = useMantineColorScheme();
+  const appliedColorScheme = useComputedColorScheme("light");
 
-  return useHydratedValue(
-    () =>
-      colorSchemeController.colorScheme === "auto"
-        ? userSystemColorScheme
-        : colorSchemeController.colorScheme,
-    "light",
-  );
+  return useHydratedValue(() => appliedColorScheme, "light");
 };
 
 export const ColorSchemeToggle: FC<{ className?: string }> = ({

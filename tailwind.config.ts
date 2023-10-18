@@ -11,19 +11,20 @@ import {
   composeColorPrimitiveVariableName,
 } from "./src/lib/theme-helpers";
 
-const generateMantineColorShades = (colorName: string) => {
-  const shades = TAILWIND_COLOR_SHADES.reduce(
-    (result, shade) => ({
-      ...result,
-      [shade]: `rgb(var(${composeColorPrimitiveVariableName(
-        colorName,
-        shade,
-      )}) / <alpha-value>)`,
-    }),
-    {},
-  );
+const composeTailwindRgbColor = (colorName: string, shade?: number) =>
+  `rgb(var(${composeColorPrimitiveVariableName(
+    colorName,
+    shade,
+  )}) / <alpha-value>)`;
 
-  return shades;
+const generateTailwindColorSetForMantineColor = (colorName: string) => {
+  const colorSet: Record<string, string> = {};
+
+  TAILWIND_COLOR_SHADES.forEach((shade) => {
+    colorSet[shade] = composeTailwindRgbColor(colorName, shade);
+  });
+
+  return colorSet;
 };
 
 type StrictDefaultMantineColor = ExtractLiterals<DefaultMantineColor>;
@@ -43,27 +44,44 @@ const mantineColorsRecord: Record<
 const ALL_MANTINE_PALETTE_COLORS = Object.keys(mantineColorsRecord);
 
 const mantineColorTwEntries: Record<string, string | Record<string, string>> =
-  ALL_MANTINE_PALETTE_COLORS.reduce(
-    (result, color) => ({
-      ...result,
-      [color]: generateMantineColorShades(color),
-    }),
-    {},
-  );
+  {};
+
+ALL_MANTINE_PALETTE_COLORS.forEach((color) => {
+  mantineColorTwEntries[color] = generateTailwindColorSetForMantineColor(color);
+});
+// ALL_MANTINE_PALETTE_COLORS.reduce(
+//   (result, color) => ({
+//     ...result,
+//     [color]: generateTailwindColorSetForMantineColor(color),
+//   }),
+//   {},
+// );
 
 const MANTINE_SIZES = ["xs", "sm", "md", "lg", "xl"];
 
+// const composeMantineSizeTwEntries = (
+//   propertyName: string,
+//   extraSizes: string[] = [],
+// ) =>
+//   [...MANTINE_SIZES, ...extraSizes].reduce(
+//     (result, size) => ({
+//       ...result,
+//       [size]: `var(--mantine-${propertyName}-${size})`,
+//     }),
+//     {},
+//   );
 const composeMantineSizeTwEntries = (
   propertyName: string,
   extraSizes: string[] = [],
-) =>
-  [...MANTINE_SIZES, ...extraSizes].reduce(
-    (result, size) => ({
-      ...result,
-      [size]: `var(--mantine-${propertyName}-${size})`,
-    }),
-    {},
-  );
+) => {
+  const result: Record<string, string> = {};
+
+  [...MANTINE_SIZES, ...extraSizes].forEach((size) => {
+    result[size] = `var(--mantine-${propertyName}-${size})`;
+  });
+
+  return result;
+};
 
 export default {
   content: ["./src/**/*.tsx"],
@@ -75,9 +93,7 @@ export default {
     borderRadius: composeMantineSizeTwEntries("radius", ["default"]),
     colors: {
       ...mantineColorTwEntries,
-      error: `rgb(var(${composeColorPrimitiveVariableName(
-        "error",
-      )}) / <alpha-value>)`,
+      error: composeTailwindRgbColor("error"),
     },
     extend: {
       fontFamily: {
