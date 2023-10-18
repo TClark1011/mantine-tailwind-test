@@ -44,7 +44,7 @@ export default function RootLayout({
           cssVariablesResolver={cssVariablesResolver}
         >
           <TRPCReactProvider headers={headers()}>
-            <ColorSchemeToggle className="absolute right-sm top-sm" />
+            <ColorSchemeToggle className="right-man_sm top-man_sm absolute" />
             {children}
           </TRPCReactProvider>
         </MantineProvider>

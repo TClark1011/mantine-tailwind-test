@@ -94,7 +94,15 @@ const createColorPrimitiveVariables = (theme: MantineTheme) =>
   );
 
 export const cssVariablesResolver: CSSVariablesResolver = (theme) => ({
-  variables: createColorPrimitiveVariables(theme),
+  variables: {
+    ...createColorPrimitiveVariables(theme),
+    [composeColorPrimitiveVariableName("white")]: printHexColorRGBValues(
+      theme.white,
+    ),
+    [composeColorPrimitiveVariableName("black")]: printHexColorRGBValues(
+      theme.black,
+    ),
+  },
   dark: {
     [composeColorPrimitiveVariableName("error")]: printHexColorRGBValues(
       theme.colors.red[9],
