@@ -1,12 +1,18 @@
 import "~/styles/globals.css";
-import '@mantine/core/styles.css';
- 
+import "@mantine/core/styles.css";
+
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import { ColorSchemeScript, MantineProvider, } from "@mantine/core";
-import { theme } from "~/theme";
+import {
+  ColorSchemeScript,
+  type MantineColorScheme,
+  MantineProvider,
+} from "@mantine/core";
+import { cssVariablesResolver, themeOverride } from "~/theme";
+import { ColorSchemeToggle } from "~/components/ColorSchemeToggle";
+import {} from "@mantine/hooks";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,6 +25,7 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+const DEFAULT_COLOR_SCHEME: MantineColorScheme = "auto";
 
 export default function RootLayout({
   children,
@@ -28,11 +35,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <ColorSchemeScript />
+        <ColorSchemeScript defaultColorScheme={DEFAULT_COLOR_SCHEME} />
       </head>
       <body className={`font-sans ${inter.variable}`}>
-        <MantineProvider theme={theme}>
-          <TRPCReactProvider headers={headers()}>{children}</TRPCReactProvider>
+        <MantineProvider
+          defaultColorScheme={DEFAULT_COLOR_SCHEME}
+          theme={themeOverride}
+          cssVariablesResolver={cssVariablesResolver}
+        >
+          <TRPCReactProvider headers={headers()}>
+            <ColorSchemeToggle className="absolute right-sm top-sm" />
+            {children}
+          </TRPCReactProvider>
         </MantineProvider>
       </body>
     </html>
