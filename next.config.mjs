@@ -7,6 +7,12 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 await import("./src/env.mjs");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+  experimental: {
+    optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
+  },
+};
 
-export default withBundleAnalyzer()(config);
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+})(config);
