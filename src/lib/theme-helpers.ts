@@ -1,4 +1,4 @@
-import { type MantineColor } from "@mantine/core";
+import { type MantineTheme, type MantineColor } from "@mantine/core";
 import { keys } from "./utils"; // Must be relative to be imported by tailwind config
 import type { StrictExclude, StrictExtract } from "$utility-types";
 
@@ -15,7 +15,7 @@ const expandPotentiallyShortHexColor = (hexColor: string) => {
   return hexColor;
 };
 
-const parseHexColorToRGBValues = (hexColor: string) => {
+export const parseHexColorToRGBValues = (hexColor: string) => {
   const fullLengthHexColor = expandPotentiallyShortHexColor(hexColor);
   const hex = fullLengthHexColor.replace("#", "");
   const r = parseInt(hex.substring(0, 2), 16);
@@ -23,6 +23,12 @@ const parseHexColorToRGBValues = (hexColor: string) => {
   const b = parseInt(hex.substring(4, 6), 16);
 
   return { r, g, b };
+};
+
+export const printHexColorRGBValues = (hexColor: string) => {
+  const { r, g, b } = parseHexColorToRGBValues(hexColor);
+
+  return `${r} ${g} ${b}`;
 };
 
 export const composeColorPrimitiveVariableName = (
@@ -33,6 +39,34 @@ export const composeColorPrimitiveVariableName = (
 export const TAILWIND_COLOR_SHADES = [
   50, 100, 200, 300, 400, 500, 600, 700, 800, 900,
 ];
+
+export const composeColorPrimitiveVariablesForColorName = (
+  colorName: MantineColor,
+  theme: MantineTheme,
+) =>
+  TAILWIND_COLOR_SHADES.reduce((result, shade, index) => {
+    const color = theme.colors[colorName][index];
+
+    if (!color)
+      throw new Error(
+        `Color ${colorName} does not have shade ${shade} (index: ${index})`,
+      );
+
+    return {
+      ...result,
+      [composeColorPrimitiveVariableName(colorName, shade)]:
+        printHexColorRGBValues(color),
+    };
+  }, {});
+
+export const createColorPrimitiveVariables = (theme: MantineTheme) =>
+  MANTINE_COLOR_NAMES.reduce(
+    (result, colorName) => ({
+      ...result,
+      ...composeColorPrimitiveVariablesForColorName(colorName, theme),
+    }),
+    {},
+  );
 
 /**
  * We create it as a record so we can have typescript

@@ -13,6 +13,8 @@ const generateTailwindColorSetForMantineColor = (colorName: string) => {
     colorSet[shade] = composeSingleTailwindRgbColor(colorName, shade);
   });
 
+  ["light", "filled", ""];
+
   return colorSet;
 };
 
