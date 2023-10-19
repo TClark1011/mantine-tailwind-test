@@ -10,6 +10,8 @@ import {
   MANTINE_COLOR_NAMES,
   TAILWIND_COLOR_SHADES,
   composeColorPrimitiveVariableName,
+  composeSchemeDependentColorVariableResolutions,
+  composeConsistentColorVariableResolutions,
 } from "$theme-helpers";
 
 const expandPotentiallyShortHexColor = (hexColor: string) => {
@@ -89,27 +91,19 @@ const createColorPrimitiveVariables = (theme: MantineTheme) =>
 export const cssVariablesResolver: CSSVariablesResolver = (theme) => ({
   variables: {
     ...createColorPrimitiveVariables(theme),
-    [composeColorPrimitiveVariableName("white")]: printHexColorRGBValues(
-      theme.white,
-    ),
-    [composeColorPrimitiveVariableName("black")]: printHexColorRGBValues(
-      theme.black,
-    ),
+    ...composeConsistentColorVariableResolutions({
+      black: theme.black,
+      white: theme.white,
+    }),
   },
-  dark: {
-    [composeColorPrimitiveVariableName("error")]: printHexColorRGBValues(
-      theme.colors.red[9],
-    ),
-    [composeColorPrimitiveVariableName("body")]: printHexColorRGBValues(
-      theme.colors.dark[7],
-    ),
-  },
-  light: {
-    [composeColorPrimitiveVariableName("error")]: printHexColorRGBValues(
-      theme.colors.red[6],
-    ),
-    [composeColorPrimitiveVariableName("body")]: printHexColorRGBValues(
-      theme.white,
-    ),
-  },
+  dark: composeSchemeDependentColorVariableResolutions({
+    error: theme.colors.red[9],
+    body: theme.colors.dark[7],
+    textColor: theme.colors.dark[0],
+  }),
+  light: composeSchemeDependentColorVariableResolutions({
+    error: theme.colors.red[6],
+    body: theme.white,
+    textColor: theme.black,
+  }),
 });

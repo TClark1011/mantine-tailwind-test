@@ -1,16 +1,10 @@
 import { type Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
 import {
   MANTINE_COLOR_NAMES,
   TAILWIND_COLOR_SHADES,
-  composeColorPrimitiveVariableName,
+  composeSingleTailwindRgbColor,
+  MANTINE_SPECIAL_COLORS,
 } from "./src/lib/theme-helpers";
-
-const composeSingleTailwindRgbColor = (colorName: string, shade?: number) =>
-  `rgb(var(${composeColorPrimitiveVariableName(
-    colorName,
-    shade,
-  )}) / <alpha-value>)`;
 
 const generateTailwindColorSetForMantineColor = (colorName: string) => {
   const colorSet: Record<string, string> = {};
@@ -29,18 +23,29 @@ MANTINE_COLOR_NAMES.forEach((color) => {
   mantineColorTwEntries[color] = generateTailwindColorSetForMantineColor(color);
 });
 
+MANTINE_SPECIAL_COLORS.forEach((colorName) => {
+  mantineColorTwEntries[colorName] = composeSingleTailwindRgbColor(colorName);
+});
+
 const MANTINE_SIZES = ["xs", "sm", "md", "lg", "xl"];
 
 type ComposeMantineSizeTwEntriesInput = {
-  propertyName: string;
-  extraSizes?: string[];
-  twKeyPrefix?: string;
+  extraSizes: string[];
+  twKeyPrefix: string;
 };
-const composeMantineSizeTwEntries = ({
-  propertyName,
-  extraSizes = [],
-  twKeyPrefix = "",
-}: ComposeMantineSizeTwEntriesInput) => {
+
+const defaultMantineSizeTwEntriesInput: ComposeMantineSizeTwEntriesInput = {
+  extraSizes: [],
+  twKeyPrefix: "",
+};
+const composeMantineSizeTwEntries = (
+  propertyName: string,
+  input: Partial<ComposeMantineSizeTwEntriesInput> = {},
+) => {
+  const { extraSizes, twKeyPrefix } = {
+    ...defaultMantineSizeTwEntriesInput,
+    ...input,
+  };
   const result: Record<string, string> = {};
 
   [...MANTINE_SIZES, ...extraSizes].forEach((size) => {
@@ -50,8 +55,7 @@ const composeMantineSizeTwEntries = ({
   return result;
 };
 
-const mantineSpacingEntries = composeMantineSizeTwEntries({
-  propertyName: "spacing",
+const mantineSpacingEntries = composeMantineSizeTwEntries("spacing", {
   twKeyPrefix: "man_",
 });
 
@@ -62,21 +66,19 @@ export default {
     preflight: false,
   },
   theme: {
-    boxShadow: composeMantineSizeTwEntries({ propertyName: "shadow" }),
-    borderRadius: composeMantineSizeTwEntries({
-      propertyName: "radius",
+    boxShadow: composeMantineSizeTwEntries("shadow"),
+    borderRadius: composeMantineSizeTwEntries("radius", {
       extraSizes: ["default"],
     }),
-    colors: {
-      ...mantineColorTwEntries,
-      error: composeSingleTailwindRgbColor("error"),
-      white: composeSingleTailwindRgbColor("white"),
-      black: composeSingleTailwindRgbColor("black"),
+    colors: mantineColorTwEntries,
+    fontSize: composeMantineSizeTwEntries("font-size"),
+    lineHeight: composeMantineSizeTwEntries("line-height"),
+    fontFamily: {
+      sans: "var(--mantine-font-family)",
+      mono: "var(--mantine-font-family-monospace)",
+      heading: "var(--mantine-font-family-headings)",
     },
     extend: {
-      fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
-      },
       spacing: mantineSpacingEntries,
       maxWidth: mantineSpacingEntries,
     },

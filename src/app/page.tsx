@@ -13,8 +13,14 @@ const TodoPage = () => {
         <div className="bg-primary-500">Primary</div>
         <div className="bg-secondary-500 shadow-md">Secondary (Shadow)</div>
         <div className="rounded-md bg-grape-500">Grape (Rounded)</div>
-        <div className="rounded-md bg-pink-800 text-white dark:bg-green-800">
+        <div className="rounded-md bg-pink-400 dark:bg-green-800 dark:text-white">
           Green If Dark, Pink if Light
+        </div>
+        <div className="border-textColor !text-textColor leading-xl border font-mono text-xs">
+          With Text Color Border, Small Text, Mono Font, Big Line Height
+        </div>
+        <div className="border-textColor !text-textColor font-heading border text-xl">
+          Border, Heading Font, Big Text
         </div>
       </div>
     </div>

@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  .border:not(
+      :where(
+          .border-dashed,
+          .border-dotted,
+          .border-double,
+          .border-none,
+          .border-hidden
+        )
+    ) {
+    @apply border-solid;
+  }
+}
