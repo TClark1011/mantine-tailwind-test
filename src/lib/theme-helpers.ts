@@ -1,4 +1,9 @@
-import { type MantineTheme, type MantineColor } from "@mantine/core";
+import {
+  type MantineTheme,
+  type MantineColor,
+  getPrimaryShade,
+  type MantineColorShade,
+} from "@mantine/core";
 import { keys } from "./utils"; // Must be relative to be imported by tailwind config
 import type { StrictExclude, StrictExtract } from "$utility-types";
 
@@ -15,25 +20,26 @@ const expandPotentiallyShortHexColor = (hexColor: string) => {
   return hexColor;
 };
 
-export const parseHexColorToRGBValues = (hexColor: string) => {
+export const printHexColorRGBValues = (hexColor: string) => {
   const fullLengthHexColor = expandPotentiallyShortHexColor(hexColor);
   const hex = fullLengthHexColor.replace("#", "");
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
+  const a = parseInt(hex.substring(6, 8), 16) / 255;
 
-  return { r, g, b };
-};
+  let result = `${r} ${g} ${b}`;
 
-export const printHexColorRGBValues = (hexColor: string) => {
-  const { r, g, b } = parseHexColorToRGBValues(hexColor);
+  if (!Number.isNaN(a) && a !== 1) {
+    result += ` / ${a}`;
+  }
 
-  return `${r} ${g} ${b}`;
+  return result;
 };
 
 export const composeColorPrimitiveVariableName = (
   colorName: string,
-  shade?: number,
+  shade?: number | string,
 ) => `--tw-color-${colorName}` + (shade ? `-${shade}` : "");
 
 export const TAILWIND_COLOR_SHADES = [
@@ -43,30 +49,59 @@ export const TAILWIND_COLOR_SHADES = [
 export const composeColorPrimitiveVariablesForColorName = (
   colorName: MantineColor,
   theme: MantineTheme,
-) =>
-  TAILWIND_COLOR_SHADES.reduce((result, shade, index) => {
+) => {
+  const cssVariables: Record<string, string> = {};
+
+  TAILWIND_COLOR_SHADES.forEach((shade, index) => {
     const color = theme.colors[colorName][index];
+    const variableName = composeColorPrimitiveVariableName(colorName, shade);
 
     if (!color)
       throw new Error(
         `Color ${colorName} does not have shade ${shade} (index: ${index})`,
       );
 
-    return {
-      ...result,
-      [composeColorPrimitiveVariableName(colorName, shade)]:
-        printHexColorRGBValues(color),
-    };
-  }, {});
+    cssVariables[variableName] = printHexColorRGBValues(color);
+  });
 
-export const createColorPrimitiveVariables = (theme: MantineTheme) =>
-  MANTINE_COLOR_NAMES.reduce(
-    (result, colorName) => ({
+  return cssVariables;
+};
+
+export const composeSpecialVariantColorPrimitiveVariables = (
+  colorName: MantineColor,
+  colorMode: "light" | "dark",
+  theme: MantineTheme,
+) => {
+  const primaryShade = getPrimaryShade(theme, colorMode);
+  const hoverShade: MantineColorShade =
+    primaryShade === 9 ? 8 : ((primaryShade + 1) as MantineColorShade);
+
+  const cssVariables = {
+    [composeColorPrimitiveVariableName(colorName, "filled")]:
+      printHexColorRGBValues(theme.colors[colorName][primaryShade]),
+    [composeColorPrimitiveVariableName(colorName, "filled-hover")]:
+      printHexColorRGBValues(theme.colors[colorName][hoverShade]),
+  };
+
+  return cssVariables;
+};
+
+export const createColorPrimitiveVariables = (theme: MantineTheme) => {
+  let result: Record<string, string> = {};
+
+  MANTINE_COLOR_NAMES.forEach((colorName) => {
+    const colorVariables = composeColorPrimitiveVariablesForColorName(
+      colorName,
+      theme,
+    );
+    result = {
       ...result,
-      ...composeColorPrimitiveVariablesForColorName(colorName, theme),
-    }),
-    {},
-  );
+      ...colorVariables,
+    };
+  });
+
+  return result;
+};
 
 /**
  * We create it as a record so we can have typescript
@@ -130,9 +165,7 @@ const generateColorVariableCompositionHelper =
     keys(colors).forEach((colorName) => {
       const cssVarName = composeColorPrimitiveVariableName(colorName);
       const hexColor = colors[colorName];
-      const { r, g, b } = parseHexColorToRGBValues(hexColor);
-      const rgbColor = `${r} ${g} ${b}`;
-      result[cssVarName] = rgbColor;
+      result[cssVarName] = printHexColorRGBValues(hexColor);
     });
 
     return result;
