@@ -25,14 +25,24 @@ export const reduceToObject = <Element, Key extends string, Value>(
 
 const _ = Symbol();
 
-type ERROR_DOES_NOT_CONTAIN_ALL_TYPES =
-  "ERROR: Your array is missing some values" & { _: typeof _ };
+type YOU_FORGOT<MissingTypes> = {
+  ERROR: "DOES NOT CONTAIN ALL TYPES";
+  missingTypes: MissingTypes;
+  _: typeof _;
+};
+// When actually used with `arrayOfAll` the IDE should
+// flatten this out in the error pop up window to actually
+// list out the forgotten types, eg;
+// `YOU_FORGOT<"a" | "b">` if "a" and "b" were left out
+// of the array.
 
 export const arrayOfAll =
   <T>() =>
   <U extends T[]>(
     array: U &
-      ([T] extends [U[number]] ? unknown : ERROR_DOES_NOT_CONTAIN_ALL_TYPES) & {
+      ([T] extends [U[number]]
+        ? unknown
+        : YOU_FORGOT<Exclude<T, U[number]>>) & {
         0: T;
       },
   ) =>
