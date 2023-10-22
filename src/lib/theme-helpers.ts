@@ -7,6 +7,25 @@ import {
 import { keys, arrayOfAll } from "./utils"; // Must be relative path to be imported by tailwind config
 import type { StrictExclude, StrictExtract } from "$utility-types";
 
+export const MANTINE_COLOR_NAMES = arrayOfAll<MantineColor>()([
+  "blue",
+  "cyan",
+  "gray",
+  "green",
+  "indigo",
+  "orange",
+  "pink",
+  "dark",
+  "red",
+  "teal",
+  "yellow",
+  "grape",
+  "lime",
+  "violet",
+  "primary",
+  "secondary",
+]);
+
 const expandPotentiallyShortHexColor = (hexColor: string) => {
   const hexWithoutHash = hexColor.replace("#", "");
 
@@ -102,25 +121,6 @@ export const createColorPrimitiveVariables = (theme: MantineTheme) => {
 
   return result;
 };
-
-export const MANTINE_COLOR_NAMES = arrayOfAll<MantineColor>()([
-  "blue",
-  "cyan",
-  "gray",
-  "green",
-  "indigo",
-  "orange",
-  "pink",
-  "dark",
-  "red",
-  "teal",
-  "yellow",
-  "grape",
-  "lime",
-  "violet",
-  "primary",
-  "secondary",
-]);
 
 export const composeSingleTailwindRgbColor = (
   colorName: string,
