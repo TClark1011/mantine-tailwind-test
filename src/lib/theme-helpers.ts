@@ -4,7 +4,7 @@ import {
   getPrimaryShade,
   type MantineColorShade,
 } from "@mantine/core";
-import { keys } from "./utils"; // Must be relative to be imported by tailwind config
+import { keys, arrayOfAll } from "./utils"; // Must be relative path to be imported by tailwind config
 import type { StrictExclude, StrictExtract } from "$utility-types";
 
 const expandPotentiallyShortHexColor = (hexColor: string) => {
@@ -103,30 +103,24 @@ export const createColorPrimitiveVariables = (theme: MantineTheme) => {
   return result;
 };
 
-/**
- * We create it as a record so we can have typescript
- * warn us if we accidentally leave out a color.
- */
-const colorObj: Record<MantineColor, string> = {
-  blue: "",
-  cyan: "",
-  gray: "",
-  green: "",
-  indigo: "",
-  orange: "",
-  pink: "",
-  dark: "",
-  red: "",
-  teal: "",
-  yellow: "",
-  grape: "",
-  lime: "",
-  primary: "",
-  secondary: "",
-  violet: "",
-};
-
-export const MANTINE_COLOR_NAMES = keys(colorObj);
+export const MANTINE_COLOR_NAMES = arrayOfAll<MantineColor>()([
+  "blue",
+  "cyan",
+  "gray",
+  "green",
+  "indigo",
+  "orange",
+  "pink",
+  "dark",
+  "red",
+  "teal",
+  "yellow",
+  "grape",
+  "lime",
+  "violet",
+  "primary",
+  "secondary",
+]);
 
 export const composeSingleTailwindRgbColor = (
   colorName: string,

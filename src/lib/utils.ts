@@ -22,3 +22,18 @@ export const reduceToObject = <Element, Key extends string, Value>(
 
   return result;
 };
+
+const _ = Symbol();
+
+type ERROR_DOES_NOT_CONTAIN_ALL_TYPES =
+  "ERROR: Your array is missing some values" & { _: typeof _ };
+
+export const arrayOfAll =
+  <T>() =>
+  <U extends T[]>(
+    array: U &
+      ([T] extends [U[number]] ? unknown : ERROR_DOES_NOT_CONTAIN_ALL_TYPES) & {
+        0: T;
+      },
+  ) =>
+    array;
