@@ -65,8 +65,17 @@ export default {
   content: ["./src/**/*.tsx"],
   darkMode: ["class", '[data-mantine-color-scheme="dark"]'],
   corePlugins: {
-    preflight: false,
+    preflight: false, // Preflight breaks mantine styling
+
+    // Fully disable the "divide" styles
+    // It's very niche functionality and doesn't work properly
+    // when we disable preflight
+    divideColor: false,
+    divideOpacity: false,
+    divideStyle: false,
+    divideWidth: false,
   },
+
   theme: {
     boxShadow: composeMantineSizeTwEntries("shadow"),
     borderRadius: composeMantineSizeTwEntries("radius", {
