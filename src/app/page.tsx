@@ -1,6 +1,6 @@
-"use client";
 
 const TodoPage = () => {
+
   return (
     <div className="pattern-bg flex min-h-screen w-screen justify-center">
       <div className="flex flex-col gap-man_md [&>*]:h-16 [&>*]:w-64 [&>*]:p-man_xs [&>*]:text-black">
