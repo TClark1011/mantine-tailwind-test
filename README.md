@@ -21,3 +21,12 @@ Mantine allows to create a `cssVariablesResolver`. A `cssVariablesResolver` allo
 The only thing I couldn't get working to integrate Mantine and Tailwind is Mantine's [variant specific colors](https://mantine.dev/styles/css-variables/#variant-specific-colors). Thankfully this isn't a huge deal. However, it is definitely possible to get these working, it's just not as smooth as I would like. In order to do it, you would need to work exactly which colors from the mantine theme are used for each variant, and then manually re-export those.
 
 For instance, you can manually check the output CSS and see that the `--mantine-color-blue-light-filled` is simply shade 400 (at least when in might mode), and then use the css variables resolver to export a variable for each color that references shade 400 under the name "light-filled", however I haven't done that hear as frankly its just tedious and I don't think its worth it.
+
+## Recreation Steps
+
+1. Use `create-t3-app` and include tailwind and typescript
+2. install `@mantine/core` and `@mantine/theme`
+3. Setup the same tsconfig paths as this project
+4. Copy over the `tailwind.config.ts`, `theme.ts` and `theme-helpers.ts`, `mantine-theme.d.ts` files from this repo
+5. Import `@mantine/core/styles.css` into `app/layout.tsx`
+6. Setup `MantineProvider` and `ColorSchemeScript` in `app/layout.tsx` the same way as in this project
