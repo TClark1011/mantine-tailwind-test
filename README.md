@@ -25,8 +25,14 @@ For instance, you can manually check the output CSS and see that the `--mantine-
 ## Recreation Steps
 
 1. Use `create-t3-app` and include tailwind and typescript
-2. install `@mantine/core` and `@mantine/theme`
+2. install `@mantine/core`, `@mantine/theme` and `type-fest` in the new project
 3. Setup the same tsconfig paths as this project
-4. Copy over the `tailwind.config.ts`, `theme.ts` and `theme-helpers.ts`, `mantine-theme.d.ts` files from this repo
+4. Copy over the following files from this project:
+   - `tailwind.config.ts`
+   - `theme.ts`
+   - `theme-helpers.ts`
+   - `utils.ts`
+   - `utility-types.ts`
+   - `mantine-theme.d.ts`
 5. Import `@mantine/core/styles.css` into `app/layout.tsx`
 6. Setup `MantineProvider` and `ColorSchemeScript` in `app/layout.tsx` the same way as in this project
